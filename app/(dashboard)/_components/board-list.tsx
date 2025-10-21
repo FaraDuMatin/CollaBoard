@@ -19,6 +19,15 @@ const BoardList = ({ orgId, query }: BoardListProps) => {
             </div>
         );
     }
+
+    if (!data.length && query.favorites) {
+        return (
+            <div>
+                <h2>No favorite boards found</h2>
+            </div>
+        );
+    }
+
     return (
         <div>
             <h2>Board List</h2>
