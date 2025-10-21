@@ -1,0 +1,19 @@
+{
+  // Tailwind CSS IntelliSense
+  "tailwindCSS.suggestions": true,
+  "tailwindCSS.classAttributes": ["class", "className"],
+  
+  // Disable Copilot inline completions (gray ghost text) in strings
+  // This stops full-line suggestions in className
+  "github.copilot.inlineSuggest.enable": false,
+  
+  // Keep the dropdown suggestion menu for Tailwind classes
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": false,
+    "strings": true
+  },
+  
+  // Put snippets at bottom so Tailwind classes show first
+  "editor.snippetSuggestions": "bottom"
+}
