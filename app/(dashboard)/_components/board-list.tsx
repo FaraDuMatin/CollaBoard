@@ -1,5 +1,12 @@
 "use client";
 
+import { EmptyBoards } from "./empty-boards";
+import { EmptyFavorites } from "./empty-favorites";
+import { EmptySearch } from "./empty-serach";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { BoardCard } from "./board-card";
+import { NewBoardButton } from "./new-board-button";
 
 interface BoardListProps {
     orgId: string;
@@ -10,30 +17,55 @@ interface BoardListProps {
 }
 
 const BoardList = ({ orgId, query }: BoardListProps) => {
-    const data = []  // TODO : change to API call
+    const data = useQuery(api.boards.get, { orgId });
+
+    if (data === undefined) {
+        return <div>Loading...</div>;
+    }
+
 
     if (!data.length && query.search) {
         return (
-            <div>
-                <h2>No boards found for this search</h2>
-            </div>
+            <EmptySearch  />
         );
     }
 
     if (!data.length && query.favorites) {
         return (
-            <div>
-                <h2>No favorite boards found</h2>
-            </div>
+            <EmptyFavorites  />
+        );
+    }
+
+    if (!data.length) {
+        return (
+            <EmptyBoards />
         );
     }
 
     return (
         <div>
-            <h2>Board List</h2>
-            <p>Organization ID: {orgId}</p>
-            <p>Search Query: {query.search}</p>
-            <p>Favorites: {query.favorites}</p>
+            <h2 className="text-3xl">
+                {query.favorites ? "Favorites Boards" : "Team Boards"}
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5
+            2xl:grid-cols-6 gap-5 mt-8 pb-10">
+                <NewBoardButton
+                    orgId={orgId}
+                />
+                {data?.map((board) => (
+                    <BoardCard
+                        key={board._id.toString()}
+                        id={board._id.toString()}
+                        title={board.title}
+                        imageUrl={board.imageUrl}
+                        authorId={board.authorId}
+                        authorName={board.authorName}
+                        createdAt={board._creationTime}
+                        orgId={board.orgId}
+                        isFavorite={false}
+                    />
+                ))}
+            </div>
         </div>
     );
 };
