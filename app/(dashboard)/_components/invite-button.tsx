@@ -19,7 +19,7 @@ export const InviteButton = () => {
         <VisuallyHidden>
           <DialogTitle>Invite Members</DialogTitle>
         </VisuallyHidden>
-        <OrganizationProfile />
+        <OrganizationProfile routing="hash" />
       </DialogContent>
     </Dialog>
   );
