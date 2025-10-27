@@ -30,7 +30,7 @@ export const OrgSidebar = () => {
                        "font-semibold text-2xl",
                        poppins.className
                    )}>
-                       ColBoard
+                       CollaBoard
                    </span>
                 </div>
             </Link>

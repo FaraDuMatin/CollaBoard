@@ -2,23 +2,42 @@
 import { Info } from "./info";
 import { Participants } from "./participants";
 import { Toolbar } from "./toolbar";
-import { useSelf } from "@liveblocks/react/suspense";
+import { useHistory, useSelf, useCanRedo, useCanUndo} from "@liveblocks/react/suspense";
+
+import { useState } from "react";
+import { CanvasMode, CanvasState } from "@/types/canvas";
 
 interface CanvasProps {
   boardId: string;
 
 }
 
+
 export const Canvas = ({boardId}:CanvasProps) => {
+  
+  const [canvasState, setCanvasState] = useState<CanvasState>({mode: CanvasMode.None });
   const info = useSelf((me) => me.info)
-   
+  
+  
+  const history = useHistory();
+  const canUndo = useCanUndo();
+  const canRedo = useCanRedo();
+
+
 
   return (
     <main className="h-full w-full relativ bg-neutral-100 touch-none">
       
-      <Info />
+      <Info boardId={boardId} />
       <Participants />
-      <Toolbar />
+      <Toolbar
+        canvasState={canvasState}
+        setCanvasState={setCanvasState}
+        canRedo={canRedo}
+        canUndo={canUndo}
+        undo={() => history.undo()}
+        redo={() => history.redo()}
+      />
     </main >
   )
 }
