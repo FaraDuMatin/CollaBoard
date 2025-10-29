@@ -6,11 +6,9 @@ import { useStorage, useSelf } from "@liveblocks/react/suspense";
 
 
 const boundingBox = (layers: Layer[]): XYWH | null => {
-    if (layers.length === 0) {
-        return null;
-    }
-
     const first = layers[0];
+
+    if (!first) return null;
 
     let left = first.x;
     let right = first.x + first.width;
@@ -19,24 +17,31 @@ const boundingBox = (layers: Layer[]): XYWH | null => {
 
     for (let i = 1; i < layers.length; i++) {
         const { x, y, width, height } = layers[i];
+
         if (left > x) {
             left = x;
         }
+
         if (right < x + width) {
             right = x + width;
         }
+
         if (top > y) {
             top = y;
         }
+
         if (bottom < y + height) {
             bottom = y + height;
         }
-        
     }
 
-    return { x: left, y: top, width: right - left, height: bottom - top };
+    return {
+        x: left,
+        y: top,
+        width: right - left,
+        height: bottom - top,
+    };
 };
-
 
 export const useSelectionBounds = () => {
     const selection = useSelf((me) => me.presence.selection);
@@ -48,4 +53,4 @@ export const useSelectionBounds = () => {
 
         return boundingBox(selectedLayers);
     }, shallow);
-}
+};

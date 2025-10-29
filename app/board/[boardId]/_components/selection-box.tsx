@@ -64,7 +64,7 @@ export const SelectionBox = memo(({
                         }}
                         onPointerDown={(e) => {
                             e.stopPropagation();
-                            onResizeHandlePointerDown(Side.Top + Side.Left, bounds);
+                            onResizeHandlePointerDown(Side.Top | Side.Left, bounds);
                         }}
                     />
                     <rect
@@ -94,7 +94,7 @@ export const SelectionBox = memo(({
                         }}
                         onPointerDown={(e) => {
                             e.stopPropagation();
-                            onResizeHandlePointerDown(Side.Top + Side.Right, bounds);
+                            onResizeHandlePointerDown(Side.Top | Side.Right, bounds);
                         }}
                     />
                     <rect
@@ -124,7 +124,7 @@ export const SelectionBox = memo(({
                         }}
                         onPointerDown={(e) => {
                             e.stopPropagation();
-                            onResizeHandlePointerDown(Side.Bottom + Side.Right, bounds);
+                            onResizeHandlePointerDown(Side.Bottom | Side.Right, bounds);
                         }}
                     />
                     <rect
@@ -154,7 +154,7 @@ export const SelectionBox = memo(({
                         }}
                         onPointerDown={(e) => {
                             e.stopPropagation();
-                            onResizeHandlePointerDown(Side.Bottom + Side.Left, bounds);
+                            onResizeHandlePointerDown(Side.Bottom | Side.Left, bounds);
                         }}
                     />
                     <rect
@@ -165,7 +165,7 @@ export const SelectionBox = memo(({
                             cursor: "ew-resize",
                             width: `${HANDLE_WIDTH}`,
                             height: `${HANDLE_WIDTH}`,
-                            transform: `translate(${bounds.x - HANDLE_WIDTH /2}px, ${bounds.y + bounds.height / 2 - HANDLE_WIDTH /2}px)`
+                            transform: `translate(${bounds.x - HANDLE_WIDTH /2}px, ${bounds.y - HANDLE_WIDTH / 2 + bounds.height / 2 }px)`
                         }}
                         onPointerDown={(e) => {
                             e.stopPropagation();
