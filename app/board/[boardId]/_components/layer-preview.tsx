@@ -7,6 +7,8 @@ import { Rectangle } from "./rectangle";
 import { Ellipse } from "./ellipse";
 import { Text } from "./text";
 import { Note } from "./note";
+import { Path } from "./path";
+import { colorToCss } from "@/lib/utils";
 
 
 
@@ -26,7 +28,7 @@ export const LayerPreview = memo(({
     
    
 
-    const layer = useStorage((root) => root.layers.get(id)!);
+    const layer = useStorage((root) => root.layers.get(id)!) as any;
     
 
     if (!layer) {
@@ -69,6 +71,19 @@ export const LayerPreview = memo(({
                     layer={layer}
                     onPointerDown={onLayerPointerDown}
                     selectionColor={selectionColor}
+                />
+            )
+
+        case LayerType.Path:
+            return (
+                <Path
+                    key={id}
+                    points={layer.points}
+                    onPointerDown={(e) => onLayerPointerDown(e, id)}
+                    stroke={selectionColor}
+                    x={layer.x}
+                    y={layer.y}
+                    fill={layer.fill ? colorToCss(layer.fill) : "#000000"}
                 />
             )
         default:

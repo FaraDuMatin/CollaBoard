@@ -46,7 +46,7 @@ export const Info = ({ boardId }: InfoProps) => {
                 font.className
               )}
             >
-              Board
+              CollaBoard
             </span>
           </Link>
         </Button>
