@@ -1,4 +1,4 @@
-import { Camera, Color, Point, Side, XYWH } from "@/types/canvas";
+import { Camera, Color, Layer, Point, Side, XYWH } from "@/types/canvas";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -81,3 +81,47 @@ export function resizeBounds(bounds: XYWH, corner: Side, point: Point): XYWH {
 }
 
 
+
+export function findIntersectingLayersWithRectangle(
+  layersIds: readonly string[],
+  layers: ReadonlyMap<string, Layer>,
+  a: Point,
+  b: Point,
+){
+  const rect = {
+    x: Math.min(a.x, b.x),
+    y: Math.min(a.y, b.y),
+    width: Math.abs(b.x - a.x),
+    height: Math.abs(b.y - a.y),
+  };
+
+  const ids = [];
+
+  for (const layerId of layersIds) {
+    const layer = layers.get(layerId);
+
+    if (layer == null) {
+      continue;
+    }
+
+    const { x,y , width, height } = layer;
+
+    if ( 
+      rect.x + rect.width > x &&
+      rect.x < x + width &&
+      rect.y + rect.height > y &&
+      rect.y < y + height
+    ) {
+      ids.push(layerId);
+    }
+  }
+
+  return ids;
+}
+
+
+
+export function getContrastingTextColor(color: Color){
+  const luminance = 0.299 * color.r + 0.587 * color.g + 0.114 * color.b;
+  return luminance > 182 ? "black" : "white";
+}
