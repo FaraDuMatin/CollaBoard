@@ -17,6 +17,7 @@ import { Button } from '../ui/button';
 import { useMutation } from 'convex/react';
 import {api} from '@/convex/_generated/api';
 import { toast } from 'sonner';
+import { Id } from '@/convex/_generated/dataModel';
 
 export const RenameModal = () => {
     const mutate  = useMutation(api.board.update);
@@ -37,7 +38,7 @@ export const RenameModal = () => {
       e,
     ) => {
       e.preventDefault();
-      mutate({ id: initialValues.id as any, title })
+      mutate({ id: initialValues.id as Id<"boards">, title })
         .then(() => {
           toast.success("Board renamed successfully");
           onClose();

@@ -146,3 +146,5 @@ export const SelectionTools = memo(({
         </div>
     );
 });
+
+SelectionTools.displayName = "SelectionTools";

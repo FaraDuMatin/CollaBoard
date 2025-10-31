@@ -1,8 +1,6 @@
 import { Star } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { title } from "process";
-import { auth } from "@clerk/nextjs/server";
 
 
 

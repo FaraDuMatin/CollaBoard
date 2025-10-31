@@ -2,7 +2,7 @@
 
 import { useStorage } from "@liveblocks/react/suspense";
 import { memo } from "react";
-import { LayerType } from "@/types/canvas";
+import { Layer, LayerType } from "@/types/canvas";
 import { Rectangle } from "./rectangle";
 import { Ellipse } from "./ellipse";
 import { Text } from "./text";
@@ -28,7 +28,7 @@ export const LayerPreview = memo(({
     
    
 
-    const layer = useStorage((root) => root.layers.get(id)!) as any;
+    const layer = useStorage((root) => root.layers.get(id)!);
     
 
     if (!layer) {
@@ -86,9 +86,7 @@ export const LayerPreview = memo(({
                     fill={layer.fill ? colorToCss(layer.fill) : "#000000"}
                 />
             )
-        default:
-            console.log("Unknown layer type in LayerPreview:", layer.type);
-            return null;
+       
     }
 
     return <div>Layer Preview</div>;

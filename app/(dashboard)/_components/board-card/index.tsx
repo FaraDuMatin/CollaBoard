@@ -11,6 +11,7 @@ import { Actions } from "@/components/actions";
 import { MoreHorizontal } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { toast } from "sonner";
 
 interface BoardCardProps {
@@ -46,10 +47,10 @@ export const BoardCard = ({
 
  const toggleFavorite = () => {
     if (isFavorite) {
-      onUnFavorite({ id: id as any })
+      onUnFavorite({ id: id as Id<"boards"> })
       .catch(() => toast.error("Failed to unfavorite"));
     } else {
-      onFavorite({ id: id as any, orgId })
+      onFavorite({ id: id as Id<"boards">, orgId })
       .catch(() => toast.error("Failed to favorite"));
     }
   };
@@ -89,10 +90,11 @@ export const BoardCard = ({
   );
 }
 
-BoardCard.Skeleton = () => {
+BoardCard.Skeleton = function BoardCardSkeleton() {
   return (
     <div className="aspect-[100/127] rounded-lg overflow-hidden">
        <Skeleton className="h-full w-full" />
     </div>
   )
 }
+
