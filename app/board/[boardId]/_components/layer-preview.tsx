@@ -1,6 +1,6 @@
 "use client"
 
-import { useStorage } from "@liveblocks/react/suspense";
+import { useStorage } from "@/lib/board-hooks";
 import { memo } from "react";
 import { Layer, LayerType } from "@/types/canvas";
 import { Rectangle } from "./rectangle";

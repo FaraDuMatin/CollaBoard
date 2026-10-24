@@ -1,4 +1,4 @@
-import { useSelf, useMutation } from "@liveblocks/react/suspense";
+import { useSelf, useMutation } from "@/lib/board-hooks";
 
 
 export const useDeleteLayers = () => {

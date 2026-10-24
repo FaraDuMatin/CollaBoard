@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { useOthersConnectionIds } from "@liveblocks/react";
+import { useOthersConnectionIds } from "@/lib/board-hooks";
 import { Cursor } from "./cursor";
 
 

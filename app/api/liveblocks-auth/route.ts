@@ -4,9 +4,6 @@ import { auth,currentUser } from "@clerk/nextjs/server";
 
 import { api } from "@/convex/_generated/api";
 
-const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
-
-
 const liveblocks = new Liveblocks({
   secret: process.env.NEXT_SECRET_LIVEBLOCKS_PRIVATE_KEY!,
 });        
@@ -20,11 +17,31 @@ export async function POST(request: Request) {
     return new Response("Unauthorized", { status: 401 });
   }
 
+  if (!authorization.orgId) {
+    return new Response("Forbidden", { status: 403 });
+  }
+
   const { room } = await request.json();
+  if (!room) {
+    return new Response("Bad Request", { status: 400 });
+  }
 
-  const board = await convex.query(api.board.get, {id:room});
+  // board.get requires auth, so forward the user's Convex token
+  const token = await authorization.getToken({ template: "convex" });
+  if (!token) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+  const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+  convex.setAuth(token);
 
-  if (board?.orgId !== authorization.orgId) {
+  let board;
+  try {
+    board = await convex.query(api.board.get, { id: room });
+  } catch {
+    return new Response("Forbidden", { status: 403 });
+  }
+
+  if (!board || board.orgId !== authorization.orgId) {
     return new Response("Forbidden", { status: 403 });
   }
 
@@ -40,9 +57,7 @@ export async function POST(request: Request) {
     { userInfo: userInfo } 
   );
 
-  if (room) {
-    session.allow(room, session.FULL_ACCESS);
-    }
+  session.allow(room, session.FULL_ACCESS);
 
 
   // Use a naming pattern to allow access to rooms with wildcards

@@ -1,7 +1,7 @@
 "use client";
-import { useOther } from "@liveblocks/react";
+import { useOther } from "@/lib/board-hooks";
 import { UserAvatar } from "./user-avatar";
-import { useOthers, useSelf } from "@liveblocks/react/suspense";
+import { useOthers, useSelf } from "@/lib/board-hooks";
 import { User } from "lucide-react";
 import { connectionIdToColor } from "@/lib/utils";
 

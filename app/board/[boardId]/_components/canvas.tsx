@@ -1,5 +1,7 @@
 "use client";
 import { Info } from "./info";
+import { GuestInfo } from "./guest-info";
+import { GuestBoardImporter } from "./guest-board-importer";
 import { Participants } from "./participants";
 import { Toolbar } from "./toolbar";
 import { useHistory, 
@@ -9,7 +11,7 @@ import { useHistory,
   useMutation,
   useStorage,
   useOthersMapped
-} from "@liveblocks/react/suspense";
+} from "@/lib/board-hooks";
 
 import { nanoid } from "nanoid";
 
@@ -20,9 +22,7 @@ import { colorToCss, connectionIdToColor, findIntersectingLayersWithRectangle, p
 import { LiveObject } from "@liveblocks/client";
 import { LayerPreview } from "./layer-preview";
 import { SelectionBox } from "./selection-box";
-import { Console } from "console";
 import { SelectionTools } from "./selection-tools";
-import { url } from "inspector";
 import { Path } from "./path";
 import { useDisableScrollBounce } from "@/hooks/use-disable-scroll-bounce";
 import { useDeleteLayers } from "@/hooks/use-delete-layers";
@@ -32,12 +32,13 @@ const MAX_LAYERS = 20;
 
 interface CanvasProps {
   boardId: string;
+  isGuest?: boolean;
 }
 
 
 
 
-export const Canvas = ({boardId}:CanvasProps) => {
+export const Canvas = ({boardId, isGuest = false}:CanvasProps) => {
 
   const layerIds = useStorage((root) => root.layerIds);
   const layers = useStorage((root) => root.layers);
@@ -469,7 +470,12 @@ export const Canvas = ({boardId}:CanvasProps) => {
       // }}
     >
       
-      <Info boardId={boardId} />
+      {isGuest ? <GuestInfo /> : (
+        <>
+          <Info boardId={boardId} />
+          <GuestBoardImporter />
+        </>
+      )}
       <Participants />
       <Toolbar
         canvasState={canvasState}

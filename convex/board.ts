@@ -1,5 +1,6 @@
 import {mutation, query} from "./_generated/server";
 import {v} from "convex/values";
+import {getIdentityWithOrg, validateTitle} from "./utils";
 
 const images = [
     "/placeholders/1.svg",
@@ -18,16 +19,17 @@ export const create = mutation({
     title: v.string(),
 },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
+    const { identity, orgId } = await getIdentityWithOrg(ctx);
+    if (args.orgId !== orgId) {
       throw new Error("Unauthorized");
     }
+    const title = validateTitle(args.title);
     const randomImage = images[Math.floor(Math.random() * images.length)];
     const board = await ctx.db.insert("boards", {
-      title: args.title,
-      orgId : args.orgId,
+      title,
+      orgId,
       authorId: identity.subject,
-      authorName: identity.name!,
+      authorName: identity.name ?? "Teammate",
       imageUrl: randomImage,
     });
     return board;
@@ -37,26 +39,22 @@ export const create = mutation({
 export const remove = mutation({
   args: {id: v.id("boards")},
   handler: async (ctx, args) => {
-   const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-     throw new Error("Unauthorized");
+    const { orgId } = await getIdentityWithOrg(ctx);
+    const board = await ctx.db.get(args.id);
+    if (!board || board.orgId !== orgId) {
+      throw new Error("Board not found");
     }
-    const userId = identity.subject;
-    // TODO : later check to delete favorite relations as well
-    const existingFavorites = await ctx.db.query("userFavorites")
-      .withIndex("by_user_board", (q) =>
-        q
-        .eq("userId", userId)
-        .eq("boardId", args.id)
-      )
-      .unique();
-    
-    if (existingFavorites) {
-      await ctx.db.delete(existingFavorites._id);
+
+    // Delete every user's favorite of this board
+    const favorites = await ctx.db.query("userFavorites")
+      .withIndex("by_board", (q) => q.eq("boardId", args.id))
+      .collect();
+    for (const favorite of favorites) {
+      await ctx.db.delete(favorite._id);
     }
-    const board = await ctx.db.delete(args.id);
+    await ctx.db.delete(args.id);
   },
-  
+
 });
 
 
@@ -66,24 +64,16 @@ export const update = mutation({
     title: v.string(),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Unauthorized");
+    const { orgId } = await getIdentityWithOrg(ctx);
+    const title = validateTitle(args.title);
+
+    const existing = await ctx.db.get(args.id);
+    if (!existing || existing.orgId !== orgId) {
+      throw new Error("Board not found");
     }
 
-    const title = args.title.trim();
-    if (!title) {
-      throw new Error("Title cannot be empty");
-    }
-
-    if (title.length > 60) {
-      throw new Error("Title cannot be longer than 60 characters");
-    }
-
-    const board = ctx.db.patch(args.id, {
-      title: args.title,
-    });
-    return board;
+    await ctx.db.patch(args.id, { title });
+    return args.id;
   }
 });
 
@@ -91,13 +81,10 @@ export const update = mutation({
 export const favorite = mutation({
   args: { id: v.id("boards"), orgId: v.string() },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Unauthorized");
-    }
+    const { identity, orgId } = await getIdentityWithOrg(ctx);
     const board = await ctx.db.get(args.id);
 
-    if (!board) {
+    if (!board || board.orgId !== orgId || args.orgId !== orgId) {
       throw new Error("Board not found");
     }
 
@@ -108,7 +95,7 @@ export const favorite = mutation({
         q
         .eq("userId", userId)
         .eq("boardId", board._id)
-        .eq("orgId", args.orgId)
+        .eq("orgId", orgId)
       )
       .unique();
     if (existingFavorite) {
@@ -117,7 +104,7 @@ export const favorite = mutation({
     await ctx.db.insert("userFavorites", {
       userId,
       boardId: board._id,
-      orgId: args.orgId,
+      orgId,
     });
     return board;
   }
@@ -128,13 +115,10 @@ export const favorite = mutation({
 export const unfavorite = mutation({
   args: { id: v.id("boards")},
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Unauthorized");
-    }
+    const { identity, orgId } = await getIdentityWithOrg(ctx);
     const board = await ctx.db.get(args.id);
 
-    if (!board) {
+    if (!board || board.orgId !== orgId) {
       throw new Error("Board not found");
     }
 
@@ -158,8 +142,11 @@ export const unfavorite = mutation({
 export const get = query({
   args: { id: v.id("boards") },
   handler: async (ctx, args) => {
+    const { orgId } = await getIdentityWithOrg(ctx);
     const board = await ctx.db.get(args.id);
-    
+    if (!board || board.orgId !== orgId) {
+      return null;
+    }
     return board;
   },
 });

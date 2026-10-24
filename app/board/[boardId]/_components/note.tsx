@@ -4,7 +4,7 @@ import { Kalam } from "next/font/google";
 
 import ContentEditable, { ContentEditableEvent } from "react-contenteditable";
 import { cn, colorToCss, getContrastingTextColor } from "@/lib/utils";
-import { useMutation} from "@liveblocks/react/suspense"
+import { useMutation} from "@/lib/board-hooks"
 
 
 const font = Kalam({

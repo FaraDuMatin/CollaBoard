@@ -4,6 +4,7 @@ import { EmptyOrg } from "./_components/empty-org";
 import { useOrganization} from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
 import BoardList from "./_components/board-list";
+import { SaveGuestBoard } from "./_components/save-guest-board";
 
 const DashBoardPage = () => {
   const {organization} = useOrganization();
@@ -18,10 +19,13 @@ const DashBoardPage = () => {
       {!organization ? (
         <EmptyOrg />
       ) : (
-        <BoardList 
-        orgId = {organization.id}
-        query={query}
-        />
+        <>
+          <SaveGuestBoard orgId={organization.id} />
+          <BoardList 
+          orgId = {organization.id}
+          query={query}
+          />
+        </>
       )}
     </div>
   );

@@ -9,7 +9,7 @@ import { Hint } from "@/app/(dashboard)/_components/hint";
 import { Button } from "@/components/ui/button";
 import { useSelectionBounds } from "@/hooks/use-selection-bounds";
 import { Camera, Color } from "@/types/canvas";
-import { useMutation, useSelf } from "@liveblocks/react/suspense";
+import { useMutation, useSelf } from "@/lib/board-hooks";
 import { ColorPicker } from "./color-picker";
 import { useDeleteLayers } from "@/hooks/use-delete-layers";
 

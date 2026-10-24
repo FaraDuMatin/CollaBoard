@@ -2,7 +2,7 @@ import { shallow } from "@liveblocks/client";
 
 import { Layer, XYWH } from "@/types/canvas";
 
-import { useStorage, useSelf } from "@liveblocks/react/suspense";
+import { useStorage, useSelf } from "@/lib/board-hooks";
 
 
 const boundingBox = (layers: Layer[]): XYWH | null => {
